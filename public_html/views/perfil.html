@@ -1,0 +1,48 @@
+<html ng-app="appPerfil">
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+	<script src="https://code.angularjs.org/1.5.3/angular-resource.js"></script>
+	<script src = "./angular-local-storage.min.js"></script>
+	<script type= "text/javascript" src="../controllers/perfilController.js"></script>
+</head>
+<body>
+	<div ng-controller="perfilController">
+  <script>
+    //var nombreUsuario = ""
+    var url=""
+    function cogeDatos() {
+      if(location.search){
+        url=location.search.substring(1);
+        nombreUsuario=url.split("=")[1]
+        document.write(nombreUsuario);
+      }
+    }
+    cogeDatos();
+  </script>
+  <button ng-Click="logout()">Logout</button>
+	<table width="90%" align="center">
+		<tr>
+			<td>
+			<h2>Consultar</h2>
+				Usuario: <input type="text" ng-model="nombreHTML">
+        <button ng-Click="desplegarRegistrosUsuario()">Registros de usuario</button>
+        <button ng-Click="desplegarLogins()">Consultar logins</button>
+        <button ng-Click="desplegarLogerrors()">Consultar logerrors</button>
+        <button ng-Click="desplegarLogouts()">Consultar logouts</button>
+        <button ng-Click="desplegarUsuarios()">Consultar usuarios</button>
+				<ul>
+				<table border="1">
+  			<tr ng-repeat="dato in resultadosHTML">
+    		<td>{{dato.usuario}}</td>
+    		<td>{{dato.password}}</td>
+				<td>{{dato.tipo}}</td>
+				<td>{{dato.horafecha}}</td>
+  			</tr>
+				</table>
+				</ul>
+				</div>
+			</td>
+		</tr>
+	</table>
+</body>
+</html>

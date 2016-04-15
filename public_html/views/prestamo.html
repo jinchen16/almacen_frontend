@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="appLog">
+	<head>
+		<meta charset="utf-8" />
+		<title>Estudiante</title>
+		<meta name="viewport" content="initial-scale=1.0; maximum-scale=1.0; width=device-width;">
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+		<script type="text/javascript" src="https://code.angularjs.org/1.5.3/angular-resource.js"></script>
+		<script type="text/javascript" src = "../controllers/angular-local-storage.min.js"></script>
+		<script src="../controllers/logCtrl.js"></script>
+		<script   
+      		src="https://code.jquery.com/jquery-2.1.3.min.js"   
+      		integrity="sha256-ivk71nXhz9nsyFDoYoGf2sbjrR9ddh+XDkCcfZxjvcM="   
+      		crossorigin="anonymous">
+    	</script>	
+		<link rel="stylesheet" type="text/css" href="../css/estilotabla.css">
+	</head>
+	<body ng-controller="prestarCtrl" ng-init="inicio()">
+		<div class="left">
+			<button class="button" ng-click="volver()">Volver</button>
+		</div>
+		<div class="right">			
+			<button class="button" ng-click="salir()">Salir</button>
+		</div>
+		<div class="table-title">
+			<h3>Prestamo</h3>
+		</div>
+		<table class="table-fill">
+		<thead>
+			<tr>
+				<th class="text-left">Elemento</th>
+				<th class="text-left">Seleccionar</th>
+			</tr>
+		</thead>
+			<tbody class="table-hover">
+				<tr ng-repeat="elemento in elementos">
+					<td class="text-left">{{elemento.nombre}}</td>
+					<td class="text-left">
+						<input 
+							type="checkbox" 							
+			    			name="elementoSeleccionado[]"
+			    			value="{{elemento._id}}"	
+			    			ng-checked="seleccion.indexOf(elemento._id) > -1"		    			
+			    			ng-click="toggleSeleccion(elemento._id)"/>
+					</td>					
+				</tr>										
+			</tbody>			
+		</table>
+		<div class="bottomright">
+			<button class="button" ng-click="solicitar(); ingresarElementos()">Solicitar</button>
+		</div>
+	</body>
+</html>

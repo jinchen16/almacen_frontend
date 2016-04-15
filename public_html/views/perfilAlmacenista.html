@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="appAlmacenista">
+	<head>
+	  	<title>Perfil Almacenista</title>
+	  	<link rel="stylesheet" type="text/css" href="../css/acordion.css">
+	</head>
+	<body ng-controller="almacenistaController">
+	    <h1>Nuevas Solicitudes de Prestamos</h1>
+		<table border="1">
+  			<tr ng-repeat="dato in resultadosHTML">
+    			<td>{{dato.idUsuario}}</td>
+    			<td>{{dato.fechaEntrega}}</td>
+				<td>{{dato.fechaVencimiento}}</td>
+  			</tr>
+		</table>
+		<button ng-Click="mostrarSolicitudes()">Consultar logerrors</button>
+	</body>
+</html>

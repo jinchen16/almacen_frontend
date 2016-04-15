@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="appLog">
+	<head>
+		<meta charset="utf-8" />
+		<title>Inicio Estudiante</title>
+		<meta name="viewport" content="initial-scale=1.0; maximum-scale=1.0; width=device-width;">
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+		<script type="text/javascript" src="https://code.angularjs.org/1.5.3/angular-resource.js"></script>
+		<script type="text/javascript" src = "../controllers/angular-local-storage.min.js"></script>
+		<script src="../controllers/logCtrl.js"></script>
+		<script   
+      		src="https://code.jquery.com/jquery-2.1.3.min.js"   
+      		integrity="sha256-ivk71nXhz9nsyFDoYoGf2sbjrR9ddh+XDkCcfZxjvcM="   
+      		crossorigin="anonymous">
+    	</script>	
+		<link rel="stylesheet" type="text/css" href="../css/estilotabla.css">
+	</head>
+	<body ng-controller="logCtrl" ng-init="inicio()">
+		<div class="right">
+			<button class="button" ng-click="salir()">Salir</button>
+		</div>
+		<div class="table-title">
+			<h3>Bienvenido {{usuarioNombre}} {{usuarioApellido}}</h3>
+		</div>
+		<table class="table-fill">
+			<thead>
+				<tr>					
+					<th class="text-left">Mis Prestamos</th>
+				</tr>
+			</thead>
+			<tbody class="table-hover" ng-repeat="prestamo in prestamos">
+				<tr>
+					<td class="text-left">{{prestamo.fecha}} - {{prestamo.elemento}}</td>
+				</tr>								
+			</tbody>
+		</table> 
+		<div class="bottomright">
+			<button class="button" ng-click="solicitarPrestamo()">Nuevo Prestamo</button>
+	 	</div>		
+	</body>
+</html>
