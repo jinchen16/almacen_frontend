@@ -2,17 +2,27 @@
 <html lang="en" ng-app="appAlmacenista">
 	<head>
 	  	<title>Perfil Almacenista</title>
+	  	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
 	  	<link rel="stylesheet" type="text/css" href="../css/acordion.css">
+	  	<script src="../controllers/almacenistaController.js"></script>
 	</head>
-	<body ng-controller="almacenistaController">
+	<body ng-controller="almacenistaController" ng-init="mostrarSolicitudes()">
 	    <h1>Nuevas Solicitudes de Prestamos</h1>
 		<table border="1">
-  			<tr ng-repeat="dato in resultadosHTML">
-    			<td>{{dato.idUsuario}}</td>
-    			<td>{{dato.fechaEntrega}}</td>
-				<td>{{dato.fechaVencimiento}}</td>
+  			<tr ng-repeat="solicitud in solicitudes">
+    			<td>{{solicitud.idUsuario}}</td>
+    			<td>{{solicitud.fechaEntrega}}</td>
+				<td>{{solicitud.fechaVencimiento}}</td>
+				<td class="text-left">
+				<input 
+					type="checkbox" 							
+			    	name="solicitudSeleccionada[]"
+			    	value="{{solicitud._id}}"	
+			    	ng-checked="seleccion.indexOf(solicitud._id) > -1"		    			
+			    	ng-click="toggleSeleccion(solicitud._id)"/>
+				</td>
   			</tr>
 		</table>
-		<button ng-Click="mostrarSolicitudes()">Consultar logerrors</button>
+		<button ng-Click="aprobarSolitudes()">Aprobar Solicitudes</button>
 	</body>
 </html>

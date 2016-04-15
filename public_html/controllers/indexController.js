@@ -10,7 +10,7 @@ app.config(function (localStorageServiceProvider) {
 app.controller('RegistroController', function($scope, $http, $resource) {
 
 	$scope.registrarse = function() {
-			var url = "https://almacen-elementos-orejuelajd.c9users.io:8081/registrar/Usuario/" + $scope.usuario.nombre + "/" + $scope.usuario.apellido + "/" + $scope.usuario.codigo + "/" + $scope.usuario.correo + "/" + $scope.usuario.contrasena + "/Estudiante";
+			var url = "https://almacen-backend-orejuelajd.c9users.io/registrar/Usuario/" + $scope.usuario.nombre + "/" + $scope.usuario.apellido + "/" + $scope.usuario.codigo + "/" + $scope.usuario.correo + "/" + $scope.usuario.contrasena + "/Estudiante";
       $http.defaults.useXDomain = true;
 			$http({
 	        method: 'GET',
@@ -19,7 +19,7 @@ app.controller('RegistroController', function($scope, $http, $resource) {
 				.then(function success(respuesta) {
 								if(respuesta.data.value.length > 0){
 									window.alert("usuario registrado");
-									//window.location.href = "http://almacen-elementos-orejuelajd.c9users.io/views/login.html";
+									//window.location.href = "http://almacen_backend-orejuelajd.c9users.io/views/login.html";
 								}else{
 									window.alert("Error al registrar el usuario");
 								}
@@ -32,7 +32,7 @@ app.controller('RegistroController', function($scope, $http, $resource) {
 app.controller('LoginController', function($scope, $http, $resource, localStorageService) {
 
 	$scope.login = function() {
-		var url = "https://almacen-elementos-orejuelajd.c9users.io:8081/login/Usuario/" + $scope.usuario.codigo + "/" + $scope.usuario.contrasena;
+		var url = "https://almacen-backend-orejuelajd.c9users.io/login/Usuario/" + $scope.usuario.codigo + "/" + $scope.usuario.contrasena;
 		$http.defaults.useXDomain = true;
 		$http({
         method: 'GET',
@@ -45,15 +45,15 @@ app.controller('LoginController', function($scope, $http, $resource, localStorag
 					window.location.href = "/usuario.html?cod="+$scope.usuario.codigo;
 		                if(respuesta.data.value[0].rol == "Estudiante"){
 		                  	localStorageService.set("codigo", $scope.usuario.codigo);
-		  					window.location.href = "https://almacen-elementos-orejuelajd.c9users.io/views/perfilEstudiante.html?codigo="+$scope.usuario.codigo;
+		  					window.location.href = "https://almacen-frontend-orejuelajd.c9users.io/views/perfilEstudiante.html?codigo="+$scope.usuario.codigo;
 		                }
 		                if(respuesta.data.value[0].rol == "Almacenista"){
 		                  	localStorageService.set("codigo", $scope.usuario.codigo);
-		  					window.location.href = "https://almacen-elementos-orejuelajd.c9users.io/views/perfilAlmacenista.html?codigo="+$scope.usuario.codigo;
+		  					window.location.href = "https://almacen-frontend-orejuelajd.c9users.io/views/perfilAlmacenista.html?codigo="+$scope.usuario.codigo;
 		                }
 		                if(respuesta.data.value[0].rol == "Funcionario"){
 		                  	localStorageService.set("codigo", $scope.usuario.codigo);
-		  					window.location.href = "https://almacen-elementos-orejuelajd.c9users.io/views/perfilFuncionario.html?codigo="+$scope.usuario.codigo;
+		  					window.location.href = "https://almacen-frontend-orejuelajd.c9users.io/views/perfilFuncionario.html?codigo="+$scope.usuario.codigo;
 		                }
 				}else{
 								window.alert("Login erroneo");
