@@ -3,11 +3,13 @@
 	<head>
 	  	<title>Perfil Almacenista</title>
 	  	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+	  	<script type="text/javascript" src = "../controllers/angular-local-storage.min.js"></script>
 	  	<link rel="stylesheet" type="text/css" href="../css/acordion.css">
 	  	<script src="../controllers/almacenistaController.js"></script>
 	</head>
 	<body ng-controller="almacenistaController" ng-init="mostrarSolicitudes()">
 	    <h1>Nuevas Solicitudes de Prestamos</h1>
+		<button class="button" ng-click="salir()">Salir</button>
 		<table border="1">
   			<tr ng-repeat="solicitud in solicitudes">
     			<td>{{solicitud.idUsuario}}</td>
