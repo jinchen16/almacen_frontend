@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="appAlmacenista">
+  <head>
+    <meta charset="UTF-8">
+    <title>PrestamoAlmacenista</title>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+	  <script type="text/javascript" src = "../controllers/angular-local-storage.min.js"></script>
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="../css/stylee.css">
+    <script type="text/javascript" src="../controllers/almacenistaController.js"></script>
+  </head>
+  <body ng-controller="almacenistaController" ng-init="mostrarSolicitudes()">
+    <ul class="accordion">
+    <h2>Solicitudes de Prestamos</h2>
+    <li class="accordion-item" ng-repeat="solicitud in solicitudes">
+      <input id="{{solicitud._id}}" class="hide" type="checkbox" autocomplete="off">
+      <label for="{{solicitud._id}}"class="accordion-label" ng-Click="mostrarItems(solicitud._id)">{{solicitud.idUsuario}}</label>
+      <ul class="accordion-child">
+        <li ng-repeat="nombreElemento in nombreElementos">
+          <label>
+            <input 
+							  type="checkbox" 							
+			    			name="elementoSeleccionado[]"
+			    			value="{{nombreElemento}}"	
+			    			ng-checked="elementosSeleccionados.indexOf(nombreElemento) > -1"		    			
+			    			ng-click="toggleSeleccion(nombreElemento)"/> {{nombreElemento}}
+          </label>
+        </li>
+        <button class="button" onClick="aprobarSolicitud()">Aprobar</button>
+     </ul>
+    </li>
+  <div class="right"><button class="button" onclick="alert('¿Esta seguro que desea salir?')">Salir</button>
+  </div>
+  </body>
+</html>
