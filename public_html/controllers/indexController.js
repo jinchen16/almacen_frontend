@@ -49,7 +49,7 @@ app.controller('LoginController', function($scope, $http, $resource, localStorag
 		                }
 		                if(respuesta.data.value[0].rol == "Almacenista"){
 		                  	localStorageService.set("codigo", $scope.usuario.codigo);
-		  					window.location.href = "https://almacen-frontend-orejuelajd.c9users.io/views/perfilAlmacenista.html?codigo="+$scope.usuario.codigo;
+		  					window.location.href = "https://almacen-frontend-orejuelajd.c9users.io/views/perfilAlmacenistaPrestamo.html?codigo="+$scope.usuario.codigo;
 		                }
 		                if(respuesta.data.value[0].rol == "Funcionario"){
 		                  	localStorageService.set("codigo", $scope.usuario.codigo);

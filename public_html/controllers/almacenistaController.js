@@ -89,11 +89,21 @@ app.controller('almacenistaController', function($scope, $http, localStorageServ
 		}
 	};
 	
+	$scope.prestamosAprobados = []; 
+	$scope.prestamosCaducados = []; 
 	$scope.prestamosEnProgreso = []; 
 	$scope.mostrarPrestamos = function(){
-		$http.get('https://almacen-backend-orejuelajd.c9users.io/buscarPrestamo/Prestamos/estado/aprobado/estado/vencido')
+		$http.get('https://almacen-backend-orejuelajd.c9users.io/read/Prestamos/estado/aprobado')
 		.success(function(data){
-			$scope.prestamosEnProgreso = data.value;
+			//$scope.prestamosEnProgreso = data.value;
+			$scope.prestamosAprobados = data.value;
+			$http.get('https://almacen-backend-orejuelajd.c9users.io/read/Prestamos/estado/caducado')
+			.success(function(data){
+				$scope.prestamosCaducados = data.value;
+				$scope.prestamosEnProgreso = $scope.prestamosCaducados.concat($scope.prestamosAprobados);
+			}).error(function(data){
+				
+			});
 		}).error(function(data){
 			console.log(data);
 		});	
