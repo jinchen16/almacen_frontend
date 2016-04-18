@@ -10,19 +10,34 @@ app.config(function (localStorageServiceProvider) {
 app.controller('almacenistaController', function($scope, $http, localStorageService) {
 	var codigo = localStorageService.get("codigo");
 	
-	$scope.seleccion = [];
-	$scope.toggleSeleccion = function toggleSeleccion(idSolicitud) {
+	$scope.seleccionSolicitud = [];
+	$scope.toggleSeleccionSolicitud = function toggleSolicitud(idSolicitud) {
 		//$scope.idElementos[i] = data.value[0]._id;
-		var idx = $scope.seleccion.indexOf(idSolicitud);
+		var idx = $scope.seleccionSolicitud.indexOf(idSolicitud);
 	    // is currently selected
 	    if (idx > -1) {
-	     	$scope.seleccion.splice(idx, 1);     	
+	     	$scope.seleccionSolicitud.splice(idx, 1);     	
 	    }
 	    // is newly selected
 	    else {
-	     	 $scope.seleccion.push(idSolicitud);
+	     	 $scope.seleccionSolicitud.push(idSolicitud);
 	    }
-	    console.log($scope.seleccion);
+	    console.log($scope.seleccionSolicitud);
+	};
+	
+	$scope.seleccionPrestamo = [];
+	$scope.toggleSeleccionPrestamo = function toggleSeleccionPrestamo(idSolicitud) {
+		//$scope.idElementos[i] = data.value[0]._id;
+		var idx = $scope.seleccionPrestamo.indexOf(idSolicitud);
+	    // is currently selected
+	    if (idx > -1) {
+	     	$scope.seleccionPrestamo.splice(idx, 1);     	
+	    }
+	    // is newly selected
+	    else {
+	     	 $scope.seleccionPrestamo.push(idSolicitud);
+	    }
+	    console.log($scope.seleccionPrestamo);
 	};
 	
 	$scope.nombresSolicitantes = [];
@@ -39,16 +54,16 @@ app.controller('almacenistaController', function($scope, $http, localStorageServ
 		});
 	};
 
-	$scope.elementos = [];
+	$scope.elementosSolicitud = [];
 	$scope.solicitudID;
-	$scope.mostrarElementos = function(solicitudID) {
+	$scope.mostrarElementosSolicitud = function(solicitudID) {
 		$scope.solicitudID = solicitudID;
 		var url = "https://almacen-backend-orejuelajd.c9users.io/read/Prestamos/_id/"+solicitudID; 
 	    $http({
 		 	method: 'GET',
 		 	url: url
 		 }).then(function success(prestamo) {
-		 		$scope.elementos = prestamo.data.value[0].elementos;
+		 		$scope.elementosSolicitud = prestamo.data.value[0].elementos;
 	 	}, function error(err) {
 	 		console.log('error');
 	 	});
@@ -57,7 +72,7 @@ app.controller('almacenistaController', function($scope, $http, localStorageServ
 	aprobarSolicitud = function (){
 		var solicitudID = $scope.solicitudID;
 		var contador = 0;
-		if($scope.seleccion.length > 0){
+		if($scope.seleccionSolicitud.length > 0){
 			if (window.confirm("¿Desea aprobar la solicitud con los elementos selecionados?")) {
 				$http.get("https://almacen-backend-orejuelajd.c9users.io/read/Prestamos/_id/"+solicitudID)
 				.success(function(prestamo){
@@ -65,12 +80,12 @@ app.controller('almacenistaController', function($scope, $http, localStorageServ
 			 		$http.get('https://almacen-backend-orejuelajd.c9users.io/update/Prestamos/' + prestamo.value[0].idUsuario + '/' + prestamo.value[0].fechaEntrega + '/' + prestamo.value[0].fechaVencimiento + '/aprobado/a/a/a/'+ solicitudID)
 					.success(function(data){
 						console.log("Prestamo aprobado" + solicitudID);
-						$scope.seleccion.forEach(function(nombreElemento){
+						$scope.seleccionSolicitud.forEach(function(nombreElemento){
 							$http.get('https://almacen-backend-orejuelajd.c9users.io/agregarElemento/Prestamos/'+ solicitudID +'/'+ nombreElemento)
 					    	.success(function(data) {
 					    	   console.log(data);
 					    	   contador ++;
-					    	   if(contador == $scope.seleccion.length){
+					    	   if(contador == $scope.seleccionSolicitud.length){
 									window.location.reload();
 								}
 					    	}).error(function(data) {
@@ -95,7 +110,6 @@ app.controller('almacenistaController', function($scope, $http, localStorageServ
 	$scope.mostrarPrestamos = function(){
 		$http.get('https://almacen-backend-orejuelajd.c9users.io/read/Prestamos/estado/aprobado')
 		.success(function(data){
-			//$scope.prestamosEnProgreso = data.value;
 			$scope.prestamosAprobados = data.value;
 			$http.get('https://almacen-backend-orejuelajd.c9users.io/read/Prestamos/estado/caducado')
 			.success(function(data){
@@ -109,9 +123,58 @@ app.controller('almacenistaController', function($scope, $http, localStorageServ
 		});	
 	};
 	
+	$scope.elementosPrestamo = [];
+	$scope.prestamoID;
+	$scope.mostrarElementosPrestamo = function(prestamoID) {
+		$scope.prestamoID = prestamoID;
+		var url = "https://almacen-backend-orejuelajd.c9users.io/read/Prestamos/_id/"+ prestamoID; 
+	    $http({
+		 	method: 'GET',
+		 	url: url
+		 }).then(function success(prestamo) {
+		 		$scope.elementosPrestamo = prestamo.data.value[0].elementos;
+	 	}, function error(err) {
+	 		console.log('error');
+	 	});
+	};
 	
-	$scope.cancelaPrestamo = function(){
-		
+	terminarPrestamo = function (){
+		var prestamoID = $scope.prestamoID;
+		var contador = 0;
+		if($scope.seleccionPrestamo.length > 0){
+			if (window.confirm("¿Desea terminar el prestamo con los elementos selecionados?")) {
+				$http.get("https://almacen-backend-orejuelajd.c9users.io/read/Prestamos/_id/"+prestamoID)
+				.success(function(prestamo){
+					//console.log(prestamo.value[0].estado + "HOLA");
+					if($scope.seleccionPrestamo.length == prestamo.value[0].elementos.length){
+						$http.get('https://almacen-backend-orejuelajd.c9users.io/update/Prestamos/' + prestamo.value[0].idUsuario + '/' + prestamo.value[0].fechaEntrega + '/' + prestamo.value[0].fechaVencimiento + '/terminado/a/a/a/'+ prestamoID)
+						.success(function(data){
+							window.location.reload();
+							console.log("Prestamo terminado" + prestamoID);
+						}).error(function(data){
+							console.log(data);
+						});	
+					}else{
+						$scope.seleccionPrestamo.forEach(function(nombreElemento){
+							$http.get('https://almacen-backend-orejuelajd.c9users.io/eliminarElemento/Prestamos/'+ prestamoID +'/'+ nombreElemento)
+					    	.success(function(data) {
+					    	   console.log(data);
+					    	   contador ++;
+					    	   if(contador == $scope.seleccionPrestamo.length){
+									window.location.reload();
+								}
+					    	}).error(function(data) {
+					    	   console.log(data); 
+					    	});
+						})
+					}
+				}).error(function(data){
+					console.log(data);
+				});	
+			}
+		}else{
+			window.alert('No hay solicitudes seleccionadas');
+		}
 	};
 	
 	$scope.salir = function(){

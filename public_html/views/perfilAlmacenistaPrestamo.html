@@ -15,16 +15,16 @@
     <h2>Solicitudes de Prestamos</h2>
     <li class="accordion-item" ng-repeat="solicitud in solicitudes">
       <input id="{{solicitud._id}}" class="hide" type="checkbox" autocomplete="off">
-      <label for="{{solicitud._id}}"class="accordion-label" ng-Click="mostrarElementos(solicitud._id)">{{solicitud.idUsuario}}</label>
+      <label for="{{solicitud._id}}"class="accordion-label" ng-Click="mostrarElementosSolicitud(solicitud._id)">{{solicitud.idUsuario}}</label>
       <ul class="accordion-child">
-        <li ng-repeat="elemento in elementos">
+        <li ng-repeat="elementoSolicitud in elementosSolicitud">
           <label>
             <input 
 							  type="checkbox" 							
-			    			name="elementoSeleccionado[]"
-			    			value="{{elemento.nombre}}"	
-			    			ng-checked="elementosSeleccionados.indexOf(elemento.nombre) > -1"		    			
-			    			ng-click="toggleSeleccion(elemento.nombre)"/> {{elemento.nombre}}
+			    			name="elementoSolicitudSeleccionado[]"
+			    			value="{{elementoSolicitud.nombre}}"	
+			    			ng-checked="elementosSolicitudSeleccionados.indexOf(elementoSolicitud.nombre) > -1"		    			
+			    			ng-click="toggleSeleccionSolicitud(elementoSolicitud.nombre)"/> {{elementoSolicitud.nombre}}
           </label>
         </li>
         <button class="button" onClick="aprobarSolicitud()">Aprobar</button>
@@ -38,19 +38,19 @@
       <h2>Prestamos en Progreso</h2>
       <li class="accordion-item" ng-repeat="prestamoEnProgreso in prestamosEnProgreso">
         <input id="{{prestamoEnProgreso._id}}" class="hide" type="checkbox" autocomplete="off">
-        <label for="{{prestamoEnProgreso._id}}"class="accordion-label" ng-Click="mostrarElementos(prestamoEnProgreso._id)">{{prestamoEnProgreso.idUsuario}}</label>
+        <label for="{{prestamoEnProgreso._id}}"class="accordion-label" ng-Click="mostrarElementosPrestamo(prestamoEnProgreso._id)">{{prestamoEnProgreso.idUsuario}}</label>
         <ul class="accordion-child">
-          <li ng-repeat="elemento in elementos">
+          <li ng-repeat="elementoPrestamo in elementosPrestamo">
             <label>
               <input 
   							  type="checkbox" 							
-  			    			name="elementoSeleccionado[]"
-  			    			value="{{elemento.nombre}}"	
-  			    			ng-checked="elementosSeleccionados.indexOf(elemento.nombre) > -1"		    			
-  			    			ng-click="toggleSeleccion(elemento.nombre)"/> {{elemento.nombre}}
+  			    			name="elementoPrestamoSeleccionado[]"
+  			    			value="{{elementoPrestamo.nombre}}"	
+  			    			ng-checked="elementosPrestamoSeleccionados.indexOf(elementoPrestamo.nombre) > -1"		    			
+  			    			ng-click="toggleSeleccionPrestamo(elementoPrestamo.nombre)"/> {{elementoPrestamo.nombre}}
             </label>
           </li>
-          <button class="button" onClick="terminarPrestamo()">Aprobar</button>
+          <button class="button" onClick="terminarPrestamo()">Cerrar Prestamo</button>
        </ul>
       </li>
       </ul>
