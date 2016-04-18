@@ -56,6 +56,7 @@ app.controller('almacenistaController', function($scope, $http, localStorageServ
 	
 	aprobarSolicitud = function (){
 		var solicitudID = $scope.solicitudID;
+		var contador = 0;
 		if($scope.seleccion.length > 0){
 			if (window.confirm("¿Desea aprobar la solicitud con los elementos selecionados?")) {
 				$http.get("https://almacen-backend-orejuelajd.c9users.io/read/Prestamos/_id/"+solicitudID)
@@ -64,17 +65,18 @@ app.controller('almacenistaController', function($scope, $http, localStorageServ
 			 		$http.get('https://almacen-backend-orejuelajd.c9users.io/update/Prestamos/' + prestamo.value[0].idUsuario + '/' + prestamo.value[0].fechaEntrega + '/' + prestamo.value[0].fechaVencimiento + '/aprobado/a/a/a/'+ solicitudID)
 					.success(function(data){
 						console.log("Prestamo aprobado" + solicitudID);
-						for(var i=0; i<$scope.seleccion.length; i++){
-					    	$http.get('https://almacen-backend-orejuelajd.c9users.io/agregarElemento/Prestamos/'+ solicitudID +'/'+ $scope.seleccion[i])
+						$scope.seleccion.forEach(function(nombreElemento){
+							$http.get('https://almacen-backend-orejuelajd.c9users.io/agregarElemento/Prestamos/'+ solicitudID +'/'+ nombreElemento)
 					    	.success(function(data) {
 					    	   console.log(data);
-					    	   if(i == $scope.seleccion.length){
+					    	   contador ++;
+					    	   if(contador == $scope.seleccion.length){
 									window.location.reload();
 								}
 					    	}).error(function(data) {
 					    	   console.log(data); 
 					    	});
-				 		}
+						})
 					}).error(function(data){
 						console.log(data);
 					});
