@@ -15,21 +15,22 @@
     <h2>Solicitudes de Prestamos</h2>
     <li class="accordion-item" ng-repeat="solicitud in solicitudes">
       <input id="{{solicitud._id}}" class="hide" type="checkbox" autocomplete="off">
-      <label for="{{solicitud._id}}"class="accordion-label" ng-Click="mostrarItems(solicitud._id)">{{solicitud.idUsuario}}</label>
+      <label for="{{solicitud._id}}"class="accordion-label" ng-Click="mostrarElementos(solicitud._id)">{{solicitud.idUsuario}}</label>
       <ul class="accordion-child">
-        <li ng-repeat="nombreElemento in nombreElementos">
+        <li ng-repeat="elemento in elementos">
           <label>
             <input 
 							  type="checkbox" 							
 			    			name="elementoSeleccionado[]"
-			    			value="{{nombreElemento}}"	
-			    			ng-checked="elementosSeleccionados.indexOf(nombreElemento) > -1"		    			
-			    			ng-click="toggleSeleccion(nombreElemento)"/> {{nombreElemento}}
+			    			value="{{elemento.nombre}}"	
+			    			ng-checked="elementosSeleccionados.indexOf(elemento.nombre) > -1"		    			
+			    			ng-click="toggleSeleccion(elemento.nombre)"/> {{elemento.nombre}}
           </label>
         </li>
         <button class="button" onClick="aprobarSolicitud()">Aprobar</button>
      </ul>
     </li>
+  
   <div class="right"><button class="button" onclick="alert('¿Esta seguro que desea salir?')">Salir</button>
   </div>
   </body>

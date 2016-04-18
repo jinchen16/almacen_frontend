@@ -28,23 +28,22 @@
 		<br>
 		<br>
 		<br>
-		<h1>Nuevas Solicitudes de Prestamos</h1>
-		<button class="button" ng-click="salir()">Salir</button>
+		<h1>Prestamos En Progreso</h1>
 		<table border="1">
-  			<tr ng-repeat="solicitud in solicitudes">
-    			<td>{{solicitud.idUsuario}}</td>
-    			<td>{{solicitud.fechaEntrega}}</td>
-				<td>{{solicitud.fechaVencimiento}}</td>
+  			<tr ng-repeat="prestamo in prestamos" ng-init="mostrarPrestamos()">
+    			<td>{{prestamo.idUsuario}}</td>
+    			<td>{{prestamo.fechaEntrega}}</td>
+				<td>{{prestamo.fechaVencimiento}}</td>
 				<td class="text-left">
 				<input 
 					type="checkbox" 							
-			    	name="solicitudSeleccionada[]"
-			    	value="{{solicitud._id}}"	
-			    	ng-checked="seleccion.indexOf(solicitud._id) > -1"		    			
-			    	ng-click="toggleSeleccion(solicitud._id)"/>
+			    	name="prestamoSeleccionado[]"
+			    	value="{{prestamo._id}}"	
+			    	ng-checked="seleccion.indexOf(prestamo._id) > -1"		    			
+			    	ng-click="toggleSeleccion(prestamo._id)"/>
 				</td>
   			</tr>
 		</table>
-		<button ng-Click="aprobarSolitudes()">Aprobar Solicitudes</button>
+		<button ng-Click="cancelarPrestamos()">Aprobar Solicitudes</button>
 	</body>
 </html>

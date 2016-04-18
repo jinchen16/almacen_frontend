@@ -20,7 +20,6 @@ app.controller('logCtrl', function($scope, $http, localStorageService){
 				.success(function(data){
 					console.log(data.value);
 					$scope.prestamos = data.value;
-					console.log($scope.elementos);
 				}).error(function(data){
 					console.log(data.value);
 				});
@@ -78,27 +77,28 @@ app.controller('logCtrl', function($scope, $http, localStorageService){
    		var idx = $scope.seleccion.indexOf(elementoNombre);
 	    // is currently selected
 	    if (idx > -1) {
-	     	$scope.seleccion.splice(idx, 1);     	
+	     	$scope.seleccion.splice(idx, 1);
+	     	console.log($scope.seleccion);
 	    }
 	    // is newly selected
 	    else {
 	    	$scope.seleccion.push(elementoNombre);	
+	    	console.log($scope.seleccion);
 	    }
 	};
 
 	//Para hacer la solicitud
 	$scope.solicitar = function(){
-		var usuarioID;		
+		var usuarioID;
+		var elementosSeleccionados = $scope.seleccion;
+		
 		if($scope.seleccion.length > 0){
 			$http.get('https://almacen-backend-orejuelajd.c9users.io/read/Usuario/codigo/' + codigo).success(function(data){
 				usuarioID = data.value[0]._id;
-				$http.get('https://almacen-backend-orejuelajd.c9users.io/create/Prestamos/' + usuarioID + '/' + new Date() + '/' + new Date() 
-				+ '/pendiente/' + $scope.seleccion + '/a/a').
+				$http.get('https://almacen-backend-orejuelajd.c9users.io/create/Prestamos/' + usuarioID + '/' + new Date().getTime() + '/' + new Date() 
+				+ '/pendiente/' + elementosSeleccionados +'/a/a').
 				success(function(data){
-					var confirmar = confirm("¿Confirmas este préstamo?");
-					if(confirmar){
-						window.location.href = './perfilEstudiante.html?codigo'+codigo;
-					}
+					console.log(data);
 				}).error(function(data){
 					console.log(data);
 				});						
@@ -110,26 +110,26 @@ app.controller('logCtrl', function($scope, $http, localStorageService){
 		}		
 	}
 	
-	// $scope.ingresarElementos = function(){
-	// 	var usuarioID;
-	// 	var prestamoID;
-		// $http.get('https://almacen-backend-orejuelajd.c9users.io/read/Usuario/codigo/' + codigo).success(function(data){
-		// 	usuarioID = data.value[0]._id;
-		// 	$http.get('https://almacen-backend-orejuelajd.c9users.io/read/Prestamos/idUsuario/' + usuarioID).success(function(data) {
-		// 		prestamoID = data.value[data.value.length-1]._id;
-		// 	    for(var i=0; i<$scope.seleccion.length; i++){
-		// 	    	$http.get('https://almacen-backend-orejuelajd.c9users.io/create/Item/' + prestamoID + '/' + $scope.seleccion[i] + '/a/a/a/a/a')
-		// 	    	.success(function(data) {
-		// 	    	   console.log(data);
-		// 	    	}).error(function(data) {
-		// 	    	   console.log(data); 
-		// 	    	});
-		// 	    }
-		// 	}).error(function(data) {
-		// 	    console.log(data);
-		// 	})
-		// }).error(function(data) {
-		// 	console.log(data);
-		// });
-	// }
+	$scope.ingresarElementos = function(){
+		var usuarioID;
+		var prestamoID;
+		$http.get('https://almacen-backend-orejuelajd.c9users.io/read/Usuario/codigo/' + codigo).success(function(data){
+			usuarioID = data.value[0]._id;
+			$http.get('https://almacen-backend-orejuelajd.c9users.io/read/Prestamos/idUsuario/' + usuarioID).success(function(data) {
+				prestamoID = data.value[data.value.length-1]._id;
+			    for(var i=0; i<$scope.seleccion.length; i++){
+			    	$http.get('https://almacen-backend-orejuelajd.c9users.io/agregarElemento/Prestamos/'+ prestamoID +'/'+ $scope.seleccion[i])
+			    	.success(function(data) {
+			    	   console.log(data);
+			    	}).error(function(data) {
+			    	   console.log(data); 
+			    	});
+			    }
+			}).error(function(data) {
+			    console.log(data);
+			})
+		}).error(function(data) {
+			console.log(data);
+		});
+	}
 });
