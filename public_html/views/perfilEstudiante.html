@@ -22,23 +22,73 @@
 		<div class="table-title">
 			<h3>Bienvenido {{usuarioNombre}} {{usuarioApellido}}</h3>
 		</div>
-		<table class="table-fill">
-			<thead>
-				<tr>					
-					<th class="text-left">Mis Prestamos</th>
-				</tr>
-			</thead>
-			<tbody class="table-hover" ng-repeat="prestamo in prestamos">
-				<tr>
-					<td class="text-left">{{prestamo.fechaEntrega | date:"MM/dd/yyyy 'at' h:mma"}}</td>
-				</tr>								
-			</tbody>
-			<p ng-repeat="elemento in elementos">
-				 {{elemento}}
-			</p>
-		</table> 
-		<div class="bottomright">
-			<button class="button" ng-click="solicitarPrestamo()">Nuevo Prestamo</button>
-	 	</div>		
+		<div ng-show="estado">
+			<div ng-show="vencido">
+				<h4 align="center">Tienes 1 (un) día para devolver los siguientes elementos:</h4>
+				<table class="table-fill">
+					<thead>
+						<tr>
+							<th class="text-left">Prestamos vencidos</th>
+						</tr>
+					</thead>
+					<tbody class="table-hover" ng-repeat="elementoVencido in elementosVencidos">
+						<tr>
+							<td class="text-left">
+								{{elementoVencido.nombre}}
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div>
+				<h4 align="center">Préstamos aún vigentes</h4>
+				<table class="table-fill">
+					<thead>
+						<tr>					
+							<th class="text-left">Mis Prestamos</th>
+							<th class="text-left">Fecha</th>
+						</tr>
+					</thead>
+					<tbody class="table-hover" ng-repeat="elemento in elementos">
+						<tr>
+							<td class="text-left">
+								{{elemento.nombre}}
+							</td>
+							<td class="text-left">
+								{{elemento.fecha | date:"MM/dd/yyyy 'at' h:mma"}}
+							</td>
+						</tr>								
+					</tbody>
+				</table> 
+			</div>
+			<div class="bottomright">
+				<button class="button" ng-click="solicitarPrestamo()">Nuevo Prestamo</button>
+		 	</div>
+	 	</div>
+	 	<div ng-show="!estado">
+	 		<div class="table-title" ng-show="sancion">
+	 			<h4>
+	 				Sanción terminada: {{fechaSancion | date:"MM/dd/yyyy 'at' h:mma"}}
+	 			</h4>
+	 		</div>
+	 		<table class="table-fill">
+				<thead>
+					<tr>					
+						<th class="text-left">Debo</th>
+						<th class="text-left">Fecha</th>
+					</tr>
+				</thead>
+				<tbody class="table-hover" ng-repeat="elementoSancion in elementosSancionados">
+					<tr>
+							<td class="text-left">
+								{{elementoSancion.nombre}}
+							</td>
+							<td class="text-left">
+								{{elementoSancion.fecha | date:"MM/dd/yyyy 'at' h:mma"}}
+							</td>
+						</tr>	
+				</tbody>
+			</table>
+	 	</div>
 	</body>
 </html>

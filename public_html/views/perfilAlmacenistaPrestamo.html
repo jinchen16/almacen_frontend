@@ -8,6 +8,7 @@
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="../css/reset.css">
     <link rel="stylesheet" href="../css/stylee.css">
+    <link rel="stylesheet" href="../css/estilotabla.css">
     <script type="text/javascript" src="../controllers/almacenistaController.js"></script>
   </head>
   <body ng-controller="almacenistaController" ng-init="mostrarSolicitudes(); mostrarPrestamos();">
@@ -15,7 +16,9 @@
     <h2>Solicitudes de Prestamos</h2>
     <li class="accordion-item" ng-repeat="solicitud in solicitudes">
       <input id="{{solicitud._id}}" class="hide" type="checkbox" autocomplete="off">
-      <label for="{{solicitud._id}}"class="accordion-label" ng-Click="mostrarElementosSolicitud(solicitud._id)">{{solicitud.idUsuario}}</label>
+      <label for="{{solicitud._id}}"class="accordion-label" ng-Click="mostrarElementosSolicitud(solicitud._id)">
+        {{solicitud.idUsuario}} 
+      </label>
       <ul class="accordion-child">
         <li ng-repeat="elementoSolicitud in elementosSolicitud">
           <label>
@@ -38,7 +41,10 @@
       <h2>Prestamos en Progreso</h2>
       <li class="accordion-item" ng-repeat="prestamoEnProgreso in prestamosEnProgreso">
         <input id="{{prestamoEnProgreso._id}}" class="hide" type="checkbox" autocomplete="off">
-        <label for="{{prestamoEnProgreso._id}}"class="accordion-label" ng-Click="mostrarElementosPrestamo(prestamoEnProgreso._id)">{{prestamoEnProgreso.idUsuario}}</label>
+        <label for="{{prestamoEnProgreso._id}}"class="accordion-label" ng-Click="mostrarElementosPrestamo(prestamoEnProgreso._id)">
+          <!--{{prestamoEnProgreso.idUsuario}} -->
+          {{prestamoEnProgreso._id}} - {{prestamoEnProgreso.estado}}
+        </label>
         <ul class="accordion-child">
           <li ng-repeat="elementoPrestamo in elementosPrestamo">
             <label>
@@ -54,7 +60,8 @@
        </ul>
       </li>
       </ul>
-  <div class="right"><button class="button" onclick="alert('¿Esta seguro que desea salir?')">Salir</button>
+  <div class="right">
+    <button class="button" onclick="alert('¿Esta seguro que desea salir?')">Salir</button>
   </div>
   </body>
 </html>

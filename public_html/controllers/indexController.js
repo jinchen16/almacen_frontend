@@ -10,7 +10,7 @@ app.config(function (localStorageServiceProvider) {
 app.controller('RegistroController', function($scope, $http, $resource) {
 
 	$scope.registrarse = function() {
-			var url = "https://almacen-backend-orejuelajd.c9users.io/registrar/Usuario/" + $scope.usuario.nombre + "/" + $scope.usuario.apellido + "/" + $scope.usuario.codigo + "/" + $scope.usuario.correo + "/" + $scope.usuario.contrasena + "/Estudiante";
+			var url = "https://almacen-backend-orejuelajd.c9users.io/registrar/Usuario/" + $scope.usuario.nombre + "/" + $scope.usuario.apellido + "/" + $scope.usuario.codigo + "/" + $scope.usuario.correo + "/" + $scope.usuario.contrasena + "/Estudiante/activo";
       $http.defaults.useXDomain = true;
 			$http({
 	        method: 'GET',
@@ -53,7 +53,7 @@ app.controller('LoginController', function($scope, $http, $resource, localStorag
 		                }
 		                if(respuesta.data.value[0].rol == "Funcionario"){
 		                  	localStorageService.set("codigo", $scope.usuario.codigo);
-		  					window.location.href = "https://almacen-frontend-orejuelajd.c9users.io/views/perfilFuncionario.html?codigo="+$scope.usuario.codigo;
+		  					window.location.href = "https://almacen-frontend-orejuelajd.c9users.io/views/Funcionarioperfil.html?codigo="+$scope.usuario.codigo;
 		                }
 				}else{
 								window.alert("Login erroneo");

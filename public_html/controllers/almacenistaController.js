@@ -77,7 +77,9 @@ app.controller('almacenistaController', function($scope, $http, localStorageServ
 				$http.get("https://almacen-backend-orejuelajd.c9users.io/read/Prestamos/_id/"+solicitudID)
 				.success(function(prestamo){
 					console.log(prestamo.value);
-			 		$http.get('https://almacen-backend-orejuelajd.c9users.io/update/Prestamos/' + prestamo.value[0].idUsuario + '/' + prestamo.value[0].fechaEntrega + '/' + prestamo.value[0].fechaVencimiento + '/aprobado/a/a/a/'+ solicitudID)
+					var fechaEntrega = new Date().getTime()
+					var fechaVencimiento = (fechaEntrega + (3*(8.64*Math.pow(10,7))));
+			 		$http.get('https://almacen-backend-orejuelajd.c9users.io/update/Prestamos/' + prestamo.value[0].idUsuario + '/' + fechaEntrega + '/' + fechaVencimiento + '/aprobado/a/a/a/'+ solicitudID)
 					.success(function(data){
 						console.log("Prestamo aprobado" + solicitudID);
 						$scope.seleccionSolicitud.forEach(function(nombreElemento){
@@ -105,16 +107,25 @@ app.controller('almacenistaController', function($scope, $http, localStorageServ
 	};
 	
 	$scope.prestamosAprobados = []; 
-	$scope.prestamosCaducados = []; 
+	$scope.prestamosCaducados = [];
+	$scope.prestamosSancionados = [];
 	$scope.prestamosEnProgreso = []; 
 	$scope.mostrarPrestamos = function(){
 		$http.get('https://almacen-backend-orejuelajd.c9users.io/read/Prestamos/estado/aprobado')
 		.success(function(data){
 			$scope.prestamosAprobados = data.value;
-			$http.get('https://almacen-backend-orejuelajd.c9users.io/read/Prestamos/estado/caducado')
+			$http.get('https://almacen-backend-orejuelajd.c9users.io/read/Prestamos/estado/vencido')
 			.success(function(data){
 				$scope.prestamosCaducados = data.value;
 				$scope.prestamosEnProgreso = $scope.prestamosCaducados.concat($scope.prestamosAprobados);
+				$http.get('https://almacen-backend-orejuelajd.c9users.io/read/Prestamos/estado/sancionado')
+				.success(function(data) {
+					$scope.prestamosSancionados = data.value;
+				    $scope.prestamosEnProgreso = $scope.prestamosCaducados.concat($scope.prestamosAprobados)
+				    .concat($scope.prestamosSancionados);
+				}).error(function(data) {
+				    console.log(data);
+				})
 			}).error(function(data){
 				
 			});
@@ -145,15 +156,26 @@ app.controller('almacenistaController', function($scope, $http, localStorageServ
 			if (window.confirm("¿Desea terminar el prestamo con los elementos selecionados?")) {
 				$http.get("https://almacen-backend-orejuelajd.c9users.io/read/Prestamos/_id/"+prestamoID)
 				.success(function(prestamo){
-					//console.log(prestamo.value[0].estado + "HOLA");
 					if($scope.seleccionPrestamo.length == prestamo.value[0].elementos.length){
-						$http.get('https://almacen-backend-orejuelajd.c9users.io/update/Prestamos/' + prestamo.value[0].idUsuario + '/' + prestamo.value[0].fechaEntrega + '/' + prestamo.value[0].fechaVencimiento + '/terminado/a/a/a/'+ prestamoID)
-						.success(function(data){
-							window.location.reload();
-							console.log("Prestamo terminado" + prestamoID);
-						}).error(function(data){
-							console.log(data);
-						});	
+						//$http.get('https://almacen-backend-orejuelajd.c9users.io/update/Prestamos/' + prestamo.value[0].idUsuario + '/' + prestamo.value[0].fechaEntrega + '/' + prestamo.value[0].fechaVencimiento + '/terminado/a/a/a/'+ prestamoID)
+						
+						if(prestamo.value[0].estado === "sancionado"){
+							$http.get('https://almacen-backend-orejuelajd.c9users.io/update/Prestamos/' + prestamo.value[0].idUsuario + '/' + (new Date().getTime() + (4*(8.64*Math.pow(10,7)))) + '/' + prestamo.value[0].fechaVencimiento + '/sancionado-terminado/a/a/a/'+ prestamoID)
+							.success(function(data){
+								window.location.reload();
+								console.log("Prestamo terminado" + prestamoID);
+							}).error(function(data){
+								console.log(data);
+							});	
+						}else{
+							$http.get('https://almacen-backend-orejuelajd.c9users.io/update/Prestamos/' + prestamo.value[0].idUsuario + '/' + prestamo.value[0].fechaEntrega + '/' + prestamo.value[0].fechaVencimiento + '/terminado/a/a/a/'+ prestamoID)
+							.success(function(data){
+								window.location.reload();
+								console.log("Prestamo terminado" + prestamoID);
+							}).error(function(data){
+								console.log(data);
+							});
+						}
 					}else{
 						$scope.seleccionPrestamo.forEach(function(nombreElemento){
 							$http.get('https://almacen-backend-orejuelajd.c9users.io/eliminarElemento/Prestamos/'+ prestamoID +'/'+ nombreElemento)

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" ng-app='appFuncionario'>
+<head>
+<meta charset="utf-8" />
+  <title>Funcionario</title>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+  <script type="text/javascript" src = "../controllers/angular-local-storage.min.js"></script>
+  <script src="../controllers/funcionarioCtrl.js"></script>
+  <link rel="stylesheet" type="text/css" href="../css/estiloFunc.css">
+  <link rel="shortcut icon" href="">
+</head>
+<body ng-controller='funcionarioCtrl' ng-init="inicio()">
+    <div class="right"><button class="button" ng-click="salir()">
+        Salir</button>
+    </div>
+<br>
+<div align="center">
+  <table id="t01" border="1" width="500">
+    <tr>
+  <td width="250">
+    <table border="1" width="250">
+      <tr>
+        <td align="middle">
+        <table id="t01" ng-init="mostrarVencidos()">
+        <br>
+         <caption>Prestamos Vencidos</caption>
+          <tr>
+              <th>Estudiante</th>
+              <th>Código</th>
+              <th>Fecha de Vencimiento</th>
+              <th>Seleccionar</th>
+          </tr>
+          <tr ng-repeat="vencido in vencidos">
+            <td> {{vencido.nombre}}  {{vencido.apellido}}</td>
+            <td> {{vencido.codigo}}</td>
+            <td> {{vencido.fecha | date:"MM/dd/yyyy 'at' h:mma"}}</td>
+            <td><input 
+    				type="checkbox" 							
+    		    	name="vencidoSeleccionado[]"
+    		    	value="{{vencido}}"	
+    		    	ng-checked="seleccion.indexOf(vencido) > -1"		    			
+    		    	ng-click="toggleSeleccion(vencido)"/>
+            </td>
+          </tr>
+      <div class="bottomright"><button class="button" ng-click="sancionarSeleccionados()">Generar Alerta</button>
+    </div>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</div>
+</body>
+</html>
