@@ -1,5 +1,5 @@
 var http = require('http');
-var port = process.env.PORT || 3000;
+var port = process.env.PORT || 80;
 
 var finalhandler = require('finalhandler');
 var serveStatic = require('serve-static');

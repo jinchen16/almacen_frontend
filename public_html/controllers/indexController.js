@@ -1,6 +1,10 @@
 //Modulo Angular
 var app = angular.module('appIndex', ['ngResource', 'LocalStorageModule']);
 
+//Generalizar url
+var urlBack = getURL("http","localhost",8080);
+var urlFront = getURL("http","localhost",80);
+
 app.config(function (localStorageServiceProvider) {
   localStorageServiceProvider
     .setPrefix('Almacen');
@@ -10,7 +14,7 @@ app.config(function (localStorageServiceProvider) {
 app.controller('RegistroController', function($scope, $http, $resource) {
 
 	$scope.registrarse = function() {
-			var url = "https://almacen-backend-orejuelajd.c9users.io/registrar/Usuario/" + $scope.usuario.nombre + "/" + $scope.usuario.apellido + "/" + $scope.usuario.codigo + "/" + $scope.usuario.correo + "/" + $scope.usuario.contrasena + "/Estudiante/activo";
+			var url = urlBack+"registrar/Usuario/" + $scope.usuario.nombre + "/" + $scope.usuario.apellido + "/" + $scope.usuario.codigo + "/" + $scope.usuario.correo + "/" + $scope.usuario.contrasena + "/Estudiante/activo";
       $http.defaults.useXDomain = true;
 			$http({
 	        method: 'GET',
@@ -30,9 +34,8 @@ app.controller('RegistroController', function($scope, $http, $resource) {
 });
 
 app.controller('LoginController', function($scope, $http, $resource, localStorageService) {
-
 	$scope.login = function() {
-		var url = "https://almacen-backend-orejuelajd.c9users.io/login/Usuario/" + $scope.usuario.codigo + "/" + $scope.usuario.contrasena;
+		var url = urlBack+"login/Usuario/" + $scope.usuario.codigo + "/" + $scope.usuario.contrasena;
 		$http.defaults.useXDomain = true;
 		$http({
         method: 'GET',
@@ -45,15 +48,15 @@ app.controller('LoginController', function($scope, $http, $resource, localStorag
 					window.location.href = "/usuario.html?cod="+$scope.usuario.codigo;
 		                if(respuesta.data.value[0].rol == "Estudiante"){
 		                  	localStorageService.set("codigo", $scope.usuario.codigo);
-		  					window.location.href = "https://almacen-frontend-orejuelajd.c9users.io/views/perfilEstudiante.html?codigo="+$scope.usuario.codigo;
+		  					window.location.href = urlFront+"views/perfilEstudiante.html?codigo="+$scope.usuario.codigo;
 		                }
 		                if(respuesta.data.value[0].rol == "Almacenista"){
 		                  	localStorageService.set("codigo", $scope.usuario.codigo);
-		  					window.location.href = "https://almacen-frontend-orejuelajd.c9users.io/views/perfilAlmacenistaPrestamo.html?codigo="+$scope.usuario.codigo;
+		  					window.location.href = urlFront+"views/perfilAlmacenistaPrestamo.html?codigo="+$scope.usuario.codigo;
 		                }
 		                if(respuesta.data.value[0].rol == "Funcionario"){
 		                  	localStorageService.set("codigo", $scope.usuario.codigo);
-		  					window.location.href = "https://almacen-frontend-orejuelajd.c9users.io/views/Funcionarioperfil.html?codigo="+$scope.usuario.codigo;
+		  					window.location.href = urlFront+"views/Funcionarioperfil.html?codigo="+$scope.usuario.codigo;
 		                }
 				}else{
 								window.alert("Login erroneo");
@@ -64,5 +67,9 @@ app.controller('LoginController', function($scope, $http, $resource, localStorag
   }
 });
 
+//Funcion para devolver la URL general
+function getURL(protocol, host, port){
+	return protocol + '://' + host + ':' + port + '/';
+}
 
 

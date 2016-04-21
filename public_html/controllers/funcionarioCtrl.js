@@ -1,5 +1,9 @@
 var app = angular.module('appFuncionario', ['LocalStorageModule']);
 
+//Generalizar url
+var urlBack = getURL("http","localhost",8080);
+var urlFront = getURL("http","localhost",80);
+
 app.config(function (localStorageServiceProvider) {
   localStorageServiceProvider
     .setPrefix('Almacen');
@@ -12,27 +16,25 @@ app.controller('funcionarioCtrl', function($scope, $http, localStorageService){
 	
 	$scope.vencidos = [];
 	$scope.mostrarVencidos = function(){
-	    $http.get('https://almacen-backend-orejuelajd.c9users.io/read/Prestamos')
+	    $http.get( urlBack + 'read/Prestamos')
 	    .success(function(prestamos){
 	        prestamos.value.forEach(function(prestamo){
 	        	console.log(prestamos);
 	        		var fechaAux = parseInt(prestamo.fechaVencimiento);
-		            if(fecha > fechaAux && prestamo.estado != "vencido" && prestamo.estado != "terminado" && prestamo.estado != "sancionado-terminado"){
-		                // console.log("usuario: " + prestamo.idUsuario + "...fecha actual: " + fecha + "...fecha vencimiento"+prestamo.fechaVencimiento);
-		                $http.get('https://almacen-backend-orejuelajd.c9users.io/read/Usuario/_id/' + prestamo.idUsuario)
+		            if(fecha > fechaAux && prestamo.estado != "vencido" && prestamo.estado != "terminado" && prestamo.estado != "sancionado-terminado"){		                
+		                $http.get( urlBack + 'read/Usuario/_id/' + prestamo.idUsuario)
 	        	        .success(function(vencido){
 	        	        	console.log(vencido);
 	        	        	if(vencido.value[0].estado != "sancionado"){
 	        	        		var usuario = {
-	        	        		idPrestamo: prestamo._id,
-	        	        		id: vencido.value[0]._id,
-	        	        		nombre: vencido.value[0].nombre, 
-	        	        		apellido: vencido.value[0].apellido,
-	        	        		codigo: vencido.value[0].codigo,
-	        	        		fecha: prestamo.fechaVencimiento
+		        	        		idPrestamo: prestamo._id,
+		        	        		id: vencido.value[0]._id,
+		        	        		nombre: vencido.value[0].nombre, 
+		        	        		apellido: vencido.value[0].apellido,
+		        	        		codigo: vencido.value[0].codigo,
+		        	        		fecha: prestamo.fechaVencimiento
 		        	        	};
-		        	            $scope.vencidos.push(usuario);//añado el usuario vencido a la lista de usuarios vencidos
-		        	            console.log(usuario);
+		        	            $scope.vencidos.push(usuario);		        	            
 	        	        	}
 	        	        }).error(function(data){
 	        	        
@@ -60,20 +62,20 @@ app.controller('funcionarioCtrl', function($scope, $http, localStorageService){
 	};
 	
 	$scope.inicio = function(){
-		$http.get('https://almacen-backend-orejuelajd.c9users.io/read/Prestamos')
+		$http.get( urlBack + 'read/Prestamos')
 		.success(function(data){
 			data.value.forEach(function(prestamo){
 				//Convertir la fecha vencimiento de string a int y hacer el calculo
 				var fechaAux = parseInt(prestamo.fechaVencimiento) + dia;
 				//Condicion para cuando es mayor a 4 dias
 				if(fecha > fechaAux && prestamo.estado == "vencido"){
-					$http.get('https://almacen-backend-orejuelajd.c9users.io/cambiarCampo/Usuario/' 
+					$http.get( urlBack + 'cambiarCampo/Usuario/' 
 					+ prestamo.idUsuario + '/sancionado').success(function(data){
 						console.log("sancionado");
 					}).error(function(data){
 						console.log(data);
 					});
-					$http.get('https://almacen-backend-orejuelajd.c9users.io/cambiarCampo/Prestamos/' 
+					$http.get( urlBack + 'cambiarCampo/Prestamos/' 
 					+ prestamo._id + '/sancionado').success(function(data){
 						console.log("sancionado");
 					}).error(function(data){
@@ -87,27 +89,6 @@ app.controller('funcionarioCtrl', function($scope, $http, localStorageService){
 		
 	};
 	
-		// $http.get('https://almacen-backend-orejuelajd.c9users.io/read/Usuario/_id/' + obj.id)
-	 //   	        .success(function(sancionado){
-	 //   	            $http.get('https://almacen-backend-orejuelajd.c9users.io/update/Usuario/'+ sancionado.value[0].nombre +'/'
-	 //   	            + sancionado.value[0].apellido +'/'+ sancionado.value[0].codigo +'/'+ sancionado.value[0].correo +'/'+ 
-	 //   	            sancionado.value[0].contrasena +'/Estudiante/sancionado/'+sancionado.value[0]._id)
-	 //   	            .success(function(data){
-	 //   	                contador ++;
-		// 		    	    if(contador == $scope.seleccion.length){
-		// 						// window.location.reload();
-		// 					}
-	 //   	            }).error(function(data){
-	 //   	                console.log(data);
-	 //   	            });
-	 //   	        }).error(function(data){
-	 //   	            console.log(data);
-	 //   	        });	
-	
-			
-		// //};
-	
-	
 	$scope.sancionarSeleccionados = function(){
 	    var contador = 0;
 	    if($scope.seleccion.length > 0){
@@ -115,7 +96,7 @@ app.controller('funcionarioCtrl', function($scope, $http, localStorageService){
 		    	//Trabajar con base a los usuarios dentro de la seleccion
 		    	$scope.seleccion.forEach(function(obj){
 	    	        /*Se pone la logica para poner los prestamos vencidos*/
-	    	         $http.get('https://almacen-backend-orejuelajd.c9users.io/cambiarCampo/Prestamos/'+ obj.idPrestamo +'/vencido')
+	    	         $http.get( urlBack + 'cambiarCampo/Prestamos/'+ obj.idPrestamo +'/vencido')
 	    	            .success(function(data){
 	    	                contador ++;
 				    	    if(contador == $scope.seleccion.length){
@@ -140,3 +121,8 @@ app.controller('funcionarioCtrl', function($scope, $http, localStorageService){
 		}
 	};
 });
+
+//Funcion para devolver la URL general
+function getURL(protocol, host, port){
+	return protocol + '://' + host + ':' + port + '/';
+}

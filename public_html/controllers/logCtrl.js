@@ -1,5 +1,9 @@
 var app = angular.module('appLog', ['ngResource', 'LocalStorageModule']);
 
+//Generalizar url
+var urlBack = getURL("http","localhost",8080);
+var urlFront = getURL("http","localhost",80);
+
 app.config(function (localStorageServiceProvider) {
   localStorageServiceProvider
     .setPrefix('Almacen');
@@ -13,18 +17,17 @@ app.controller('logCtrl', function($scope, $http, localStorageService){
 		$scope.vencido;
 		$scope.sancion;
 		var dia = + 6*(8.64*Math.pow(10,7));
-		var fecha = new Date().getTime() + dia; // para adelantar en el tiempo y mirar si al pasar la fecha de sancion, se activa nuevamente + (6*(8.64*Math.pow(10,7)))
-		console.log(fecha);
-		
+		var fecha = new Date().getTime(); // para adelantar en el tiempo y mirar si al pasar la fecha de sancion, se activa nuevamente + (6*(8.64*Math.pow(10,7)))
+				
 		if(codigo !== '' && codigo !== undefined){
 			//Buscar datos del estudiante
-			$http.get('https://almacen-backend-orejuelajd.c9users.io/read/Usuario/codigo/' + codigo).success(function(data){			
+			$http.get( urlBack+'read/Usuario/codigo/' + codigo).success(function(data){			
 				$scope.usuarioNombre = data.value[0].nombre;
 				$scope.usuarioApellido = data.value[0].apellido;
 				var id =data.value[0]._id;
 				if(data.value[0].estado === "activo"){
 					$scope.estado = true;
-					$http.get('https://almacen-backend-orejuelajd.c9users.io/buscarPrestamo/Prestamos/idUsuario/'+id+'/estado/vencido')
+					$http.get( urlBack + 'buscarPrestamo/Prestamos/idUsuario/'+id+'/estado/vencido')
 					.success(function(data) {
 					    if(data.value.length > 0){
 					    	$scope.vencido = true;
@@ -50,7 +53,7 @@ app.controller('logCtrl', function($scope, $http, localStorageService){
 				
 				if($scope.estado){
 					//Buscar los elementos prestados
-					$http.get('https://almacen-backend-orejuelajd.c9users.io/buscarPrestamo/Prestamos/idUsuario/'+id+'/estado/aprobado')
+					$http.get( urlBack + 'buscarPrestamo/Prestamos/idUsuario/'+id+'/estado/aprobado')
 					.success(function(data){
 						var elementosArr = [];
 						for(var i = 0; i < data.value.length; i++){
@@ -66,7 +69,7 @@ app.controller('logCtrl', function($scope, $http, localStorageService){
 				}
 				else{//Condicion para cuando el estado es sancionado, en donde solo muestra los elementos dados por la sancion
 					//Buscar elementos prestados y que aun falta por entregar
-					$http.get('https://almacen-backend-orejuelajd.c9users.io/buscarPrestamo/Prestamos/idUsuario/'+id+'/estado/sancionado')
+					$http.get( urlBack + 'buscarPrestamo/Prestamos/idUsuario/'+id+'/estado/sancionado')
 					.success(function(data) {
 						//Poner las condiciones para el array elementosSancionados
 						var elementosArr = [];
@@ -77,7 +80,7 @@ app.controller('logCtrl', function($scope, $http, localStorageService){
 							}
 						}
 						$scope.elementosSancionados = elementosArr;
-					$http.get('https://almacen-backend-orejuelajd.c9users.io/buscarPrestamo/Prestamos/idUsuario/'+id+'/estado/sancionado-terminado')
+					$http.get( urlBack + 'buscarPrestamo/Prestamos/idUsuario/'+id+'/estado/sancionado-terminado')
 					.success(function(data){
 						if(data.value.length > 0){
 					    	if(fecha <= data.value[data.value.length-1].fechaEntrega){
@@ -86,7 +89,7 @@ app.controller('logCtrl', function($scope, $http, localStorageService){
 								$scope.fechaSancion = data.value[data.value.length-1].fechaEntrega;
 					    	}else{
 					   			$scope.estado = true;
-					   			$http.get('https://almacen-backend-orejuelajd.c9users.io/cambiarCampo/Usuario/'+ id +'/activo').success(function(data) {
+					   			$http.get( urlBack + 'cambiarCampo/Usuario/'+ id +'/activo').success(function(data) {
 					   			    console.log(data);
 					   			}).error(function(data) {
 				   				    console.log(data);
@@ -112,11 +115,8 @@ app.controller('logCtrl', function($scope, $http, localStorageService){
 
 	$scope.salir = function(){
 		var confirmar = confirm("¿Está seguro que desea salir?");
-		if(confirmar){
-			localStorageService.set("codigo","");
-			window.location.href = '../index.html';
-		}
-	};
+		logout(confirmar, localStorageService);
+	}
 	
 
 	$scope.solicitarPrestamo = function(){
@@ -131,21 +131,18 @@ app.controller('logCtrl', function($scope, $http, localStorageService){
 
 	//Mostrar los elementos presentes cuando se inicia
 	$scope.inicio = function(){
-		$http.get('https://almacen-backend-orejuelajd.c9users.io/read/Elementos').success(function(data){
+		$http.get( urlBack + 'read/Elementos').success(function(data){
 			$scope.elementos = data.value;								
 		}).error(function(data){
 			console.log(data);
 		});		
 	}
 
-	//Para salirse del perfil
+	//Para salirse del perfil	
 	$scope.salir = function(){
 		var confirmar = confirm("¿Está seguro que desea salir?");
-		if(confirmar){
-			localStorageService.set('codigo','');
-			window.location.href = '../index.html';
-		}
-	};
+		logout(confirmar, localStorageService);
+	}
 
 	//Para volver al perfil
 	$scope.volver = function(){
@@ -158,13 +155,11 @@ app.controller('logCtrl', function($scope, $http, localStorageService){
    		var idx = $scope.seleccion.indexOf(elementoNombre);
 	    // is currently selected
 	    if (idx > -1) {
-	     	$scope.seleccion.splice(idx, 1);
-	     	console.log($scope.seleccion);
+	     	$scope.seleccion.splice(idx, 1);	     	
 	    }
 	    // is newly selected
 	    else {
-	    	$scope.seleccion.push(elementoNombre);	
-	    	console.log($scope.seleccion);
+	    	$scope.seleccion.push(elementoNombre);		    	
 	    }
 	};
 
@@ -174,9 +169,9 @@ app.controller('logCtrl', function($scope, $http, localStorageService){
 		var elementosSeleccionados = $scope.seleccion;
 		
 		if($scope.seleccion.length > 0){
-			$http.get('https://almacen-backend-orejuelajd.c9users.io/read/Usuario/codigo/' + codigo).success(function(data){
+			$http.get( urlBack + 'read/Usuario/codigo/' + codigo).success(function(data){
 				usuarioID = data.value[0]._id;
-				$http.get('https://almacen-backend-orejuelajd.c9users.io/create/Prestamos/' + usuarioID + '/' + new Date().getTime() + '/' 
+				$http.get( urlBack + 'create/Prestamos/' + usuarioID + '/' + new Date().getTime() + '/' 
 				+ (new Date().getTime() + (3*(8.64*Math.pow(10,7)))) + '/pendiente/' + elementosSeleccionados +'/a/a').
 				success(function(data){
 					console.log(data);
@@ -194,12 +189,12 @@ app.controller('logCtrl', function($scope, $http, localStorageService){
 	$scope.ingresarElementos = function(){
 		var usuarioID;
 		var prestamoID;
-		$http.get('https://almacen-backend-orejuelajd.c9users.io/read/Usuario/codigo/' + codigo).success(function(data){
+		$http.get( urlBack + 'read/Usuario/codigo/' + codigo).success(function(data){
 			usuarioID = data.value[0]._id;
-			$http.get('https://almacen-backend-orejuelajd.c9users.io/read/Prestamos/idUsuario/' + usuarioID).success(function(data) {
+			$http.get( urlBack + 'read/Prestamos/idUsuario/' + usuarioID).success(function(data) {
 				prestamoID = data.value[data.value.length-1]._id;
 			    for(var i=0; i<$scope.seleccion.length; i++){
-			    	$http.get('https://almacen-backend-orejuelajd.c9users.io/agregarElemento/Prestamos/'+ prestamoID +'/'+ $scope.seleccion[i])
+			    	$http.get( urlBack + 'agregarElemento/Prestamos/'+ prestamoID +'/'+ $scope.seleccion[i])
 			    	.success(function(data) {
 			    	   console.log(data);
 			    	}).error(function(data) {
@@ -208,8 +203,8 @@ app.controller('logCtrl', function($scope, $http, localStorageService){
 			    }
 			    var confirmar = confirm("¿Deseas validar este préstamo?");
 				if(confirmar){
-				window.location.href = './perfilEstudiante.html?codigo='+localStorageService.get('codigo');
-		}
+					window.location.href = './perfilEstudiante.html?codigo='+localStorageService.get('codigo');
+				}
 			}).error(function(data) {
 			    console.log(data);
 			})
@@ -218,3 +213,15 @@ app.controller('logCtrl', function($scope, $http, localStorageService){
 		});
 	}
 });
+
+//Funcion para devolver la URL general
+function getURL(protocol, host, port){
+	return protocol + '://' + host + ':' + port + '/';
+}
+
+function logout(confirmar, localStorageService){
+		if(confirmar){
+			localStorageService.set("codigo","");
+			window.location.href = '../index.html';
+	}
+}

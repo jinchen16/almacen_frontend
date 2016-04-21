@@ -1,6 +1,10 @@
 //Modulo Angular
 var app = angular.module('appAlmacenista', ['LocalStorageModule']);
 
+//Generalizar url
+var urlBack = getURL("http","localhost",8080);
+var urlFront = getURL("http","localhost",80);
+
 app.config(function (localStorageServiceProvider) {
   localStorageServiceProvider
     .setPrefix('Almacen');
@@ -43,7 +47,7 @@ app.controller('almacenistaController', function($scope, $http, localStorageServ
 	$scope.nombresSolicitantes = [];
 	$scope.solicitudes = [];
 	$scope.mostrarSolicitudes = function() {
-		var url = "https://almacen-backend-orejuelajd.c9users.io/read/Prestamos/estado/pendiente";
+		var url = urlBack + 'read/Prestamos/estado/pendiente';
 	    $http({
 			method: 'GET',
 			url: url
@@ -58,7 +62,7 @@ app.controller('almacenistaController', function($scope, $http, localStorageServ
 	$scope.solicitudID;
 	$scope.mostrarElementosSolicitud = function(solicitudID) {
 		$scope.solicitudID = solicitudID;
-		var url = "https://almacen-backend-orejuelajd.c9users.io/read/Prestamos/_id/"+solicitudID; 
+		var url = urlBack + 'read/Prestamos/_id/'+solicitudID; 
 	    $http({
 		 	method: 'GET',
 		 	url: url
@@ -74,16 +78,16 @@ app.controller('almacenistaController', function($scope, $http, localStorageServ
 		var contador = 0;
 		if($scope.seleccionSolicitud.length > 0){
 			if (window.confirm("¿Desea aprobar la solicitud con los elementos selecionados?")) {
-				$http.get("https://almacen-backend-orejuelajd.c9users.io/read/Prestamos/_id/"+solicitudID)
+				$http.get( urlBack + 'read/Prestamos/_id/' + solicitudID)
 				.success(function(prestamo){
 					console.log(prestamo.value);
 					var fechaEntrega = new Date().getTime()
 					var fechaVencimiento = (fechaEntrega + (3*(8.64*Math.pow(10,7))));
-			 		$http.get('https://almacen-backend-orejuelajd.c9users.io/update/Prestamos/' + prestamo.value[0].idUsuario + '/' + fechaEntrega + '/' + fechaVencimiento + '/aprobado/a/a/a/'+ solicitudID)
+			 		$http.get( urlBack + 'update/Prestamos/' + prestamo.value[0].idUsuario + '/' + fechaEntrega + '/' + fechaVencimiento + '/aprobado/a/a/a/'+ solicitudID)
 					.success(function(data){
 						console.log("Prestamo aprobado" + solicitudID);
 						$scope.seleccionSolicitud.forEach(function(nombreElemento){
-							$http.get('https://almacen-backend-orejuelajd.c9users.io/agregarElemento/Prestamos/'+ solicitudID +'/'+ nombreElemento)
+							$http.get( urlBack + 'agregarElemento/Prestamos/'+ solicitudID +'/'+ nombreElemento)
 					    	.success(function(data) {
 					    	   console.log(data);
 					    	   contador ++;
@@ -111,14 +115,14 @@ app.controller('almacenistaController', function($scope, $http, localStorageServ
 	$scope.prestamosSancionados = [];
 	$scope.prestamosEnProgreso = []; 
 	$scope.mostrarPrestamos = function(){
-		$http.get('https://almacen-backend-orejuelajd.c9users.io/read/Prestamos/estado/aprobado')
+		$http.get( urlBack + 'read/Prestamos/estado/aprobado')
 		.success(function(data){
 			$scope.prestamosAprobados = data.value;
-			$http.get('https://almacen-backend-orejuelajd.c9users.io/read/Prestamos/estado/vencido')
+			$http.get( urlBack + 'read/Prestamos/estado/vencido')
 			.success(function(data){
 				$scope.prestamosCaducados = data.value;
 				$scope.prestamosEnProgreso = $scope.prestamosCaducados.concat($scope.prestamosAprobados);
-				$http.get('https://almacen-backend-orejuelajd.c9users.io/read/Prestamos/estado/sancionado')
+				$http.get( urlBack + 'read/Prestamos/estado/sancionado')
 				.success(function(data) {
 					$scope.prestamosSancionados = data.value;
 				    $scope.prestamosEnProgreso = $scope.prestamosCaducados.concat($scope.prestamosAprobados)
@@ -138,7 +142,7 @@ app.controller('almacenistaController', function($scope, $http, localStorageServ
 	$scope.prestamoID;
 	$scope.mostrarElementosPrestamo = function(prestamoID) {
 		$scope.prestamoID = prestamoID;
-		var url = "https://almacen-backend-orejuelajd.c9users.io/read/Prestamos/_id/"+ prestamoID; 
+		var url = urlBack + 'read/Prestamos/_id/'+ prestamoID; 
 	    $http({
 		 	method: 'GET',
 		 	url: url
@@ -154,13 +158,11 @@ app.controller('almacenistaController', function($scope, $http, localStorageServ
 		var contador = 0;
 		if($scope.seleccionPrestamo.length > 0){
 			if (window.confirm("¿Desea terminar el prestamo con los elementos selecionados?")) {
-				$http.get("https://almacen-backend-orejuelajd.c9users.io/read/Prestamos/_id/"+prestamoID)
+				$http.get( urlBack + 'read/Prestamos/_id/' + prestamoID)
 				.success(function(prestamo){
-					if($scope.seleccionPrestamo.length == prestamo.value[0].elementos.length){
-						//$http.get('https://almacen-backend-orejuelajd.c9users.io/update/Prestamos/' + prestamo.value[0].idUsuario + '/' + prestamo.value[0].fechaEntrega + '/' + prestamo.value[0].fechaVencimiento + '/terminado/a/a/a/'+ prestamoID)
-						
+					if($scope.seleccionPrestamo.length == prestamo.value[0].elementos.length){						
 						if(prestamo.value[0].estado === "sancionado"){
-							$http.get('https://almacen-backend-orejuelajd.c9users.io/update/Prestamos/' + prestamo.value[0].idUsuario + '/' + (new Date().getTime() + (4*(8.64*Math.pow(10,7)))) + '/' + prestamo.value[0].fechaVencimiento + '/sancionado-terminado/a/a/a/'+ prestamoID)
+							$http.get( urlBack + 'update/Prestamos/' + prestamo.value[0].idUsuario + '/' + (new Date().getTime() + (4*(8.64*Math.pow(10,7)))) + '/' + prestamo.value[0].fechaVencimiento + '/sancionado-terminado/a/a/a/'+ prestamoID)
 							.success(function(data){
 								window.location.reload();
 								console.log("Prestamo terminado" + prestamoID);
@@ -168,7 +170,7 @@ app.controller('almacenistaController', function($scope, $http, localStorageServ
 								console.log(data);
 							});	
 						}else{
-							$http.get('https://almacen-backend-orejuelajd.c9users.io/update/Prestamos/' + prestamo.value[0].idUsuario + '/' + prestamo.value[0].fechaEntrega + '/' + prestamo.value[0].fechaVencimiento + '/terminado/a/a/a/'+ prestamoID)
+							$http.get( urlBack + 'update/Prestamos/' + prestamo.value[0].idUsuario + '/' + prestamo.value[0].fechaEntrega + '/' + prestamo.value[0].fechaVencimiento + '/terminado/a/a/a/'+ prestamoID)
 							.success(function(data){
 								window.location.reload();
 								console.log("Prestamo terminado" + prestamoID);
@@ -178,7 +180,7 @@ app.controller('almacenistaController', function($scope, $http, localStorageServ
 						}
 					}else{
 						$scope.seleccionPrestamo.forEach(function(nombreElemento){
-							$http.get('https://almacen-backend-orejuelajd.c9users.io/eliminarElemento/Prestamos/'+ prestamoID +'/'+ nombreElemento)
+							$http.get( urlBack + 'eliminarElemento/Prestamos/'+ prestamoID +'/'+ nombreElemento)
 					    	.success(function(data) {
 					    	   console.log(data);
 					    	   contador ++;
@@ -207,3 +209,8 @@ app.controller('almacenistaController', function($scope, $http, localStorageServ
 			}
 	};
 });
+
+//Funcion para devolver la URL general
+function getURL(protocol, host, port){
+	return protocol + '://' + host + ':' + port + '/';
+}
